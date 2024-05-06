@@ -1,0 +1,23 @@
+﻿@model IEnumerable<Order>
+@{
+    ViewData["Title"] = "Order Manage";
+}
+
+    <h2 class="text-dark py-2">Order Manage</h2>
+    <table id="tblData1" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+       </table>
+@section Scripts{
+    <script src="~/js/Order.js"></script>
+}
+

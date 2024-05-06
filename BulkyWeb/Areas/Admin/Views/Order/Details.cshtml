@@ -1,0 +1,35 @@
+﻿@model IEnumerable<OrderDetail>
+@{
+    ViewData["Title"] = "Order Details";
+}
+<h2 class="text-dark py-2">Order Manage</h2>
+<table id="tblData" class="table table-bordered table-striped mb-lg-5">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+        </tr>
+    </thead>
+    @foreach (var orderdt in Model)
+    {
+        <tr>
+            <td>@orderdt.Product.Title</td>
+            <td><img src="@orderdt.Product.ImageUrl" style="width:80px;height:100px" /></td>
+            <td>@orderdt.Quantity</td>
+            <td>@orderdt.Product.ListPrice</td>
+            <td>@(orderdt.Product.ListPrice * orderdt.Quantity)$</td>
+        </tr>
+    }
+    <tr>
+        <td colspan="4">Total:</td>
+        <td>
+            @{
+                double total = Model.Sum(orderdt => orderdt.Product.ListPrice * orderdt.Quantity);
+            }
+            @total$
+        </td>
+    </tr>
+</table>

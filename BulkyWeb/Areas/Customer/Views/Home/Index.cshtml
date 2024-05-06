@@ -1,0 +1,125 @@
+﻿@model BulkyBook.Models.ViewModels.ProductViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+
+<div class="row pb-3">
+    <form asp-action="Index">
+        <div class="row">
+            <div class="col-5">
+                <input name="term" class="form-control" placeholder="Search for books" />
+            </div>
+            <div class="col-3">
+                <button type="submit" class="btn btn-info">Search</button>
+            </div>
+            <div class="col-3">
+                <a class="btn btn-dark" href="/Customer/Home/Index?orderBy=@Model.PriceSortOrder">Sort by price</a>
+            </div>
+        </div>
+    </form>
+    @foreach (var product in Model.Products.Where(u=>u.IsActive==true)) 
+    {
+        <div class="col-lg-3 col-sm-6">
+            <div class="row p-2">
+                <div class="col-12 p-1">
+                    <div class="card border-0 p-3 shadow  border-top border-5 rounded">
+                        <img src="@product.ImageUrl" class="card-img-top rounded" style="height:400px" />
+                        <div class="card-body pb-0">
+                            <div class="pl-1">
+                                <p class="card-title h5 text-dark opacity-75 text-uppercase text-center" style="font-size:15px">@product.Title</p>
+                                <p class="card-title text-warning text-center">by <b>@product.Author</b></p>
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center mb-0">
+                                    List Price:
+                                    <span>
+                                        @product.ListPrice.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="pl-1">
+                                <p class="text-dark text-opacity-75 text-center">
+                                    As low as:
+                                    <span>
+                                        @product.Price100.ToString("c")
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <a asp-action="Details"
+                               asp-route-productId="@product.Id"
+                               class="btn btn-primary bg-gradient border-0 form-control">
+                                Details
+                            </a>                          
+                        </div>
+                        <div>
+                            <button type="button" onclick="add(@product.Id)"
+                                    class="btn btn-primary bg-gradient border-0 form-control mt-2">
+                                Add to cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (Model.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Customer/Home/Index?term=@Model.Term&orderBy=@Model.OrderBy&currentPage=@(Model.CurrentPage-1)" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            }
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                if (i == Model.CurrentPage)
+                {
+                    <li class="page-item"><a class="page-link active" href="/Customer/Home/Index?term=@Model.Term&orderBy=@Model.OrderBy&currentPage=@i"> @i</a></li>
+                }
+                else
+                {
+                    <li class="page-item"><a class="page-link" href="/Customer/Home/Index?term=@Model.Term&orderBy=@Model.OrderBy&currentPage=@i"> @i</a></li>
+                }
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="/Customer/Home/Index?term=@Model.Term&orderBy=@Model.OrderBy&currentPage=@(Model.CurrentPage+1)" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+@section Scripts{
+    <script>
+        async function add(productId) {
+             var usernameEl = document.getElementById("username");
+        if(usernameEl==null){
+            window.location.href = "/Identity/Account/Login";
+        }
+            try {
+                var response = await fetch(`/Customer/Cart/AddItem?productId=${productId}`);
+                if (response.status == 200) {
+                    var result = await response.json();
+                    var cartCountEl = document.getElementById("cartCount");
+                    cartCountEl.innerHTML = result;
+                    window.location.href = "#cartCount";
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
+
+
+
+

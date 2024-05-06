@@ -1,0 +1,101 @@
+﻿
+@model ShoppingCart
+@{
+    ViewData["Title"] = "Shopping cart";
+}
+
+<div style="width:90%;margin:auto" class="mt-2">
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+    {
+        <h5>My Cart</h5>
+
+        <table class="table table-bordered table-striped">
+            <tr>
+                <th>Book</th>
+                <th>Image</th>
+                <th>Category</th>
+                <th>Unit Price(INR)</th>
+                <th>Total Price</th>
+                <th>Action</th>
+            </tr>
+            @foreach (var item in Model.CartDetails)
+            {
+                <tr>
+                    <td>@item.Product.Title</td>
+                    <td> 
+                            <img src="@item.Product.ImageUrl" style="width:80px;height:100px" />
+                    </td>
+                    <td>@item.Product.Category.Name</td>
+                    <td>@item.Product.ListPrice X @item.Quantity</td>
+                    <td>@(item.Product.ListPrice * item.Quantity)</td>
+                    <td>
+                        <a class="btn btn-info" href="/Customer/Cart/AddItem?productId=@item.ProductId&&redirect=1">+</a>
+                        <a class="btn btn-info" href="/Customer/cart/removeitem?productId=@item.ProductId">-</a>
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card text-white bg-dark mb-3">
+                        <div class="card-header">Recipient information</div>
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row ">
+                                    <div class="col-4 mt-2">
+                                        <input type="number" class="form-control" placeholder="Phone number" id="inputPhoneNumber" name="PhoneNumber">
+                                    </div>
+                                    <div class="col-4 mt-2">
+                                        <input type="text" class="form-control" placeholder="Name" id="inputFullName" name="FullName">
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="my-2">
+                                            <h5>Transport fee:</h5>
+                                            0 $
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-8 mt-2">
+                                        <input type="text" class="form-control" placeholder="Address" id="inputAddress" name="Address">
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="my-2">
+                                            <h5>Total: </h5>
+                                            @(Model.CartDetails.Select(item => item.Product.ListPrice * item.Quantity).Sum()) $
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4 mt-2">
+                                        <a class="btn btn-primary" onclick="redirectToCheckout()">Order</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <h5>Cart is empty</h5>
+    }
+</div>
+
+<script>
+    function redirectToCheckout() {
+        var fullName = document.getElementById('inputFullName').value;
+        var phoneNumber = document.getElementById('inputPhoneNumber').value;
+        var address = document.getElementById('inputAddress').value;
+
+
+        var checkoutUrl = `/Customer/Cart/Checkout?fullName=${fullName}&phoneNumber=${phoneNumber}&address=${address}`;
+        window.location.href = checkoutUrl;
+        
+    }
+</script>
